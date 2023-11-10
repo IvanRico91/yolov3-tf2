@@ -8,7 +8,9 @@ import tensorflow as tf
 import lxml.etree
 import tqdm
 
-flags.DEFINE_string('data_dir', './data/voc2012_raw/VOCdevkit/VOC2012/',
+# flags.DEFINE_string('data_dir', './data/voc2012_raw/VOCdevkit/VOC2012/',
+#                    'path to raw PASCAL VOC dataset')
+flags.DEFINE_string('data_dir', './data/datasets/cucumbers',
                     'path to raw PASCAL VOC dataset')
 flags.DEFINE_enum('split', 'train', [
                   'train', 'val'], 'specify train or val spit')
@@ -90,14 +92,16 @@ def main(_argv):
     class_map = {name: idx for idx, name in enumerate(
         open(FLAGS.classes).read().splitlines())}
     logging.info("Class mapping loaded: %s", class_map)
-
+    print(class_map)
     writer = tf.io.TFRecordWriter(FLAGS.output_file)
     image_list = open(os.path.join(
-        FLAGS.data_dir, 'ImageSets', 'Main', '%s.txt' % FLAGS.split)).read().splitlines()
+        #FLAGS.data_dir, 'ImageSets', 'Main', '%s.txt' % FLAGS.split)).read().splitlines()
+        FLAGS.data_dir,  '%s.txt' % FLAGS.split)).read().splitlines()
     logging.info("Image list loaded: %d", len(image_list))
     for name in tqdm.tqdm(image_list):
         annotation_xml = os.path.join(
-            FLAGS.data_dir, 'Annotations', name + '.xml')
+            #FLAGS.data_dir, 'Annotations', name + '.xml')
+            FLAGS.data_dir, 'Annotations', name + '.txt')
         annotation_xml = lxml.etree.fromstring(open(annotation_xml).read())
         annotation = parse_xml(annotation_xml)['annotation']
         tf_example = build_example(annotation, class_map)
