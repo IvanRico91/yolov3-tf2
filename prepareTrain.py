@@ -165,18 +165,19 @@ def main(_):
     class_names = load_classes(class_file)
 
     # Define the paths to your image and label directories
-    image_dir = 'data/datasets/cucumbers/images'
-    label_dir = 'data/datasets/cucumbers/Annotations'
+    image_dir = 'data/datasets/cucumbers/Train/images'
+    label_dir = 'data/datasets/cucumbers/Train/Annotations'
 
     image_files = os.listdir(image_dir)
 
     for image_file in image_files:
-        image_path = os.path.join(image_dir, image_file)
-        label_file = os.path.splitext(image_file)[0] + '.txt'
-        label_path = os.path.join(label_dir, label_file)
+        if image_file.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp')):
+          image_path = os.path.join(image_dir, image_file)
+          label_file = os.path.splitext(image_file)[0] + '.txt'
+          label_path = os.path.join(label_dir, label_file)
 
-        tf_example = create_tf_example(image_path, label_path,class_names)
-        writer.write(tf_example.SerializeToString())
+          tf_example = create_tf_example(image_path, label_path,class_names)
+          writer.write(tf_example.SerializeToString())
 
     writer.close()
 
